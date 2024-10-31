@@ -80,9 +80,31 @@ def visualize(dir_image: str, pred_results: List[Tuple], dir_save: str):
     image = Image.open(dir_image).convert("RGB")
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype("deploy/Deng.ttf", 10)
+    pred_kv_results, pred_line_results = pred_results
+
+    for result in pred_kv_results:
+        print(result)
+        if len(result) == 4:
+            key_text, value_text, key_box, value_box = result
+            # Process the four elements
+        elif len(result) == 2:
+            key_text, value_text = result
+            key_box = value_box = None  # Assign default values or handle accordingly
+            # Process the two elements
+        else:
+            raise ValueError(f"Unexpected number of elements in result: {len(result)}")
+        
+    
+    return image
 
     pred_kv_results, pred_line_results = pred_results
     for key_text, value_text, key_box, value_box in pred_kv_results:
+
+        print("key_text", key_text)
+        print("value_text", value_text)
+        print("key_box", key_box)
+        print("value_box", value_box)
+
         key_left, key_top, key_right, key_bottom = key_box
         value_left, value_top, value_right, value_bottom = value_box
 
