@@ -274,35 +274,20 @@ class InferenceService:
                 line_box_list = image_features["boxes"][0]
             else:
                 curr_ocr = json.load(open(curr_ocr_path, "r", encoding="utf-8"))
-                print(curr_ocr)
                 if "texts" in curr_ocr:
                     curr_ocr = curr_ocr["texts"]
                 line_text_list, line_box_list = [], []
-                
-
-                for line_info in curr_ocr['lines']:
-                    print(line_info)
-                    line_text_list.append(line_info['text'])
-                    x, y, w, h = line_info['bbox']
-                    x0, y0, x1, y1 = x, y, x + w, y + h
-                    
-                    line_box_list.append([x0, y0, x1, y1])
-
-
-                if False:
-                    for line_info in curr_ocr:
-                        if "ocr" in line_info:
-                            line_text_list.append(line_info["ocr"])
-                        else:
-                            line_text_list.append(line_info["text"])
-                        if "bbox" in line_info:
-                            line_box_list.append(box_two_point_convert(line_info["bbox"]))
-                        else:
-                            line_box_list.append(box_two_point_convert(line_info["box"]))
+                for line_info in curr_ocr:
+                    if "ocr" in line_info:
+                        line_text_list.append(line_info["ocr"])
+                    else:
+                        line_text_list.append(line_info["text"])
+                    if "bbox" in line_info:
+                        line_box_list.append(box_two_point_convert(line_info["bbox"]))
+                    else:
+                        line_box_list.append(box_two_point_convert(line_info["box"]))
 
             ro_sorted_box_idx_list = sort_boxes(line_box_list)
-
-            print(ro_sorted_box_idx_list)
 
             texts = []
             input_ids = []
@@ -329,7 +314,6 @@ class InferenceService:
                 else:
                     line_sos_processed_tokens = line_tokens
 
-                print(image_w, image_h)
                 line_orig_bbox = line_box_list[ro_sorted_idx]
                 line_norm_bbox = normalize_bbox(line_orig_bbox, (image_w, image_h))
 

@@ -119,6 +119,13 @@ def main():
     # Set seed before initializing model.
     set_seed(training_args.seed)
 
+    # Set remove_unused_columns to False
+    training_args.remove_unused_columns = False
+
+    print("Model Arguments: ", model_args)
+    print("Data Arguments: ", data_args)
+    print("Training Arguments: ", training_args)
+
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -303,6 +310,21 @@ def main():
 
         return metric
 
+    # print summary of the train_dataset
+    if training_args.do_train:
+        logger.info(f"Train dataset: {train_dataset}")
+        # print first two examples
+        for i in range(2):
+            logger.info(f"Example {i}: {train_dataset[i].keys()}")
+
+    # print summary of the eval_dataset
+    if training_args.do_eval:
+        logger.info(f"Eval dataset: {eval_dataset}")
+        # print first two examples
+        for i in range(2):
+            logger.info(f"Example {i}: {eval_dataset[i].keys()}")
+
+
     # Initialize Trainer
     trainer = PEneoTrainer(
         model=model,
@@ -327,7 +349,7 @@ def main():
         processor.save_pretrained(training_args.output_dir)
 
     if training_args.do_eval:
-        metrics = trainer.evaluate()
+        metrics = trainer.evaluate(eval_dataset if training_args.do_eval else None)
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
 

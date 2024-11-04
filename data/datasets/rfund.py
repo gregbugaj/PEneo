@@ -455,7 +455,7 @@ class RFUNDDataset(Dataset):
             line_grouping_tail_rel_matrix_spots
         ), f"line relation length mismatch {image_fname}"
 
-        return {
+        v =  {
             "fname": image_fname,
             "image_path": image_dir,
             "input_ids": input_ids,
@@ -469,3 +469,5 @@ class RFUNDDataset(Dataset):
             "line_grouping_head_rel_matrix_spots": line_grouping_head_rel_matrix_spots,
             "line_grouping_tail_rel_matrix_spots": line_grouping_tail_rel_matrix_spots,
         }
+        # print("v = ", v.keys())
+        return v

@@ -2,6 +2,7 @@ import collections
 import logging
 import time
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
+import os
 
 import numpy as np
 import torch
@@ -22,6 +23,8 @@ if version.parse(torch.__version__) >= version.parse("1.6"):
 
 logger = logging.get_logger(__name__)
 
+# Disable tokenizers parallelism
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 class EvalPredictionWithID(NamedTuple):
     predictions: Union[np.ndarray, Tuple[np.ndarray]]
@@ -114,6 +117,10 @@ class PEneoTrainer(Trainer):
         line_grouping_t2t_shaking_tags = []
         gt_relations = []
         for inputs in dataloader:
+            
+        
+            print("inputs.keys(): ", inputs.keys())
+
             outputs = self.prediction_step(
                 model, inputs, prediction_loss_only, ignore_keys=ignore_keys
             )
@@ -251,6 +258,19 @@ class PEneoTrainer(Trainer):
             self.args.local_rank = torch.distributed.get_rank()
 
         start_time = time.time()
+
+
+        logger.info("***** Running Evaluation *****")
+        logger.info(f" eval_dataloader  = {eval_dataloader}")
+        logger.info(f"Eval dataset: {eval_dataset}")
+        # print first two examples
+        for i in range(2):
+            logger.info(f"Example {i}: {eval_dataset[i].keys()}")
+
+        # check the keys from the dataloader
+        for inputs in eval_dataloader:
+            logger.info(f"inputs.keys(): {inputs.keys()}")
+            break
 
         metrics = self.prediction_loop(
             eval_dataloader,

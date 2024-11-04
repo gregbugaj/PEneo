@@ -227,4 +227,5 @@ class DataCollatorForPEneo:
                 "pixel_values"
             ]
 
+        print("batch keys in collator:", batch.keys())
         return batch
